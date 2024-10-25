@@ -1,0 +1,16 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="analytics"></ion-icon>
+      {{ 'benchmark.title' | transloco }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ng-container *transloco="let t; read: 'benchmark'">
+    <div class="container">
+      <ion-button (click)="bench()">Start Benchmarking!</ion-button>
+    </div>
+  </ng-container>
+</ion-content>
