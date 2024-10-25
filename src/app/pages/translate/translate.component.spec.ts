@@ -64,7 +64,7 @@ describe('TranslateComponent', () => {
     expect(document.title).toEqual('תרגום סימנים');
 
     transloco.setActiveLang('en');
-    expect(document.title).toEqual('Ubuntu');
+    expect(document.title).toEqual('Sign Translate');
   });
 
   // TODO test state
