@@ -1,10 +1,6 @@
 import {Component} from '@angular/core';
-import {SettingsOfflineComponent} from '../settings-offline/settings-offline.component';
-import {SettingsAboutComponent} from '../settings-about/settings-about.component';
 import {SettingsVoiceInputComponent} from '../settings-voice-input/settings-voice-input.component';
 import {SettingsVoiceOutputComponent} from '../settings-voice-output/settings-voice-output.component';
-import {SettingsFeedbackComponent} from '../settings-feedback/settings-feedback.component';
-import {SettingsAppearanceComponent} from '../settings-appearance/settings-appearance.component';
 
 interface Page {
   path: string;
@@ -24,13 +20,13 @@ interface PagesGroup {
 })
 export class SettingsMenuComponent {
   groups: PagesGroup[] = [
-    {
-      name: 'support',
-      pages: [
-        {path: 'feedback', icon: 'chatbubbles', component: SettingsFeedbackComponent},
-        {path: 'about', icon: 'information-circle', component: SettingsAboutComponent},
-      ],
-    },
+    // {
+    //   name: 'support',
+    //   pages: [
+    //     {path: 'feedback', icon: 'chatbubbles', component: SettingsFeedbackComponent},
+    //     {path: 'about', icon: 'information-circle', component: SettingsAboutComponent},
+    //   ],
+    // },
     {
       name: 'voice',
       pages: [
@@ -38,12 +34,12 @@ export class SettingsMenuComponent {
         {path: 'output', icon: 'volume-medium', component: SettingsVoiceOutputComponent},
       ],
     },
-    {
-      name: 'other',
-      pages: [
-        {path: 'offline', icon: 'airplane', component: SettingsOfflineComponent},
-        {path: 'appearance', icon: 'person-circle', component: SettingsAppearanceComponent},
-      ],
-    },
+    // {
+    //   name: 'other',
+    //   pages: [
+    //     {path: 'offline', icon: 'airplane', component: SettingsOfflineComponent},
+    //     {path: 'appearance', icon: 'person-circle', component: SettingsAppearanceComponent},
+    //   ],
+    // },
   ];
 }
