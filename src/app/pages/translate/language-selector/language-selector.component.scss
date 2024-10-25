@@ -7,10 +7,6 @@
 
 mat-tab-group {
   display: inline-block;
-  ion-button.mat-mdc-menu-trigger {
-    display: none !important;
-    opacity: 0 !important;
-  }
 }
 
 /* Make language expansion menu show the correct icon */

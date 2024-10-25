@@ -5,7 +5,6 @@ export const IANASignedLanguages = [
   {signed: 'asp', spoken: 'ar', country: 'dz', abbreviation: ''}, // Algerian Sign Language
   {signed: 'syy', spoken: 'ar', country: 'ps', abbreviation: 'ABSL'}, // Al-Sayyid Bedouin Sign Language
   {signed: 'jks', spoken: 'ja', country: 'jp', abbreviation: ''}, // Amami Koniya Sign Language
-  {signed: 'ase', spoken: 'en', country: 'us', abbreviation: 'ASL'}, // American Sign Language
   {signed: 'aed', spoken: 'es', country: 'ar', abbreviation: ''}, // Argentine Sign Language
   {signed: 'aen', spoken: 'hy', country: 'am', abbreviation: ''}, // Armenian Sign Language
   {signed: 'asf', spoken: 'en', country: 'au', abbreviation: 'Auslan'}, // Australian Sign Language

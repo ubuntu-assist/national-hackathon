@@ -24,13 +24,13 @@ export class PlayableVideoEncoder {
 
   container: 'webm' | 'mp4';
   codec: string;
-  bitrate = 10_000_000; // 10Mbps max! (https://github.com/Vanilagy/mp4-muxer/issues/36)
+  bitrate = 10_000_000;
   alpha = true;
 
   width: number;
   height: number;
 
-  constructor(private image: ImageBitmap, private fps: number) {}
+  constructor(private readonly image: ImageBitmap, private readonly fps: number) {}
 
   static isSupported() {
     return 'VideoEncoder' in globalThis;
@@ -130,8 +130,6 @@ export class PlayableVideoEncoder {
       height: this.height,
       bitrate: this.bitrate,
       framerate: this.fps,
-      // TODO: this is not yet supported in Chrome https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/modules/webcodecs/video_encoder.cc#279
-      // alpha: this.muxer.alpha ? 'keep' as AlphaOption : false
     };
     this.videoEncoder.configure(config);
 

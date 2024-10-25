@@ -16,7 +16,7 @@ export class SkeletonPoseViewerComponent extends BasePoseViewerComponent impleme
 
   colorSchemeMedia!: MediaQueryList;
 
-  constructor(store: Store, private mediaMatcher: MediaMatcher) {
+  constructor(store: Store, private readonly mediaMatcher: MediaMatcher) {
     super(store);
 
     this.colorSchemeMedia = this.mediaMatcher.matchMedia('(prefers-color-scheme: dark)');

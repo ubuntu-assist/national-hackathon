@@ -37,7 +37,6 @@ export class LanguageSelectorComponent extends BaseComponent implements OnInit, 
   }
 
   ngOnInit(): void {
-    // this.languages = ['ase', 'fsl'];
     if (!this.language) {
       this.selectLanguage(this.languages[0]);
     }
@@ -111,9 +110,7 @@ export class LanguageSelectorComponent extends BaseComponent implements OnInit, 
 
   selectLanguage(lang: string): void {
     if (!this.topLanguages) {
-      this.topLanguages = ['ase', 'fsl'];
-
-      console.log(this.topLanguages);
+      this.topLanguages = this.languages.slice(0, 3);
     }
 
     if (lang !== this.language) {

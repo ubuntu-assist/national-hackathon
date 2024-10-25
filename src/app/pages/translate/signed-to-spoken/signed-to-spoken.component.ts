@@ -86,7 +86,7 @@ export class SignedToSpokenComponent implements OnInit {
   spokenLanguage$!: Observable<string>;
   spokenLanguageText$!: Observable<string>;
 
-  constructor(private store: Store) {
+  constructor(private readonly store: Store) {
     this.videoState$ = this.store.select<VideoStateModel>(state => state.video);
     this.inputMode$ = this.store.select<InputMode>(state => state.translate.inputMode);
     this.spokenLanguage$ = this.store.select<string>(state => state.translate.spokenLanguage);
