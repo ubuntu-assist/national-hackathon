@@ -1,12 +1,14 @@
+import {HttpClient} from '@angular/common/http';
 import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngxs/store';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-desktop-textarea',
   templateUrl: './desktop-textarea.component.html',
-  styleUrl: './desktop-textarea.component.scss',
+  styleUrls: ['./desktop-textarea.component.scss'],
 })
 export class DesktopTextareaComponent {
   @Input() maxLength: number;
@@ -16,8 +18,11 @@ export class DesktopTextareaComponent {
 
   hoveredSentenceIndex = null;
   sentences$!: Observable<string[]>;
+  private urlToTranslate: string | null = null;
+  private textSegments: string[] = [];
+  private currentSegmentIndex = 0;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private http: HttpClient, private route: ActivatedRoute) {
     this.sentences$ = this.store.select<string[]>(state => state.translate.spokenLanguageSentences);
   }
 }

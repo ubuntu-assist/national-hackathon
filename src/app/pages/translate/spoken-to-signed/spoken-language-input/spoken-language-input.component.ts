@@ -1,15 +1,16 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {debounce, distinctUntilChanged, skipWhile, takeUntil, tap} from 'rxjs/operators';
+import {Store} from '@ngxs/store';
 import {interval, Observable} from 'rxjs';
+import {debounce, distinctUntilChanged, skipWhile, takeUntil, tap} from 'rxjs/operators';
+import {BaseComponent} from '../../../../components/base/base.component';
 import {
   SetSpokenLanguage,
   SetSpokenLanguageText,
   SuggestAlternativeText,
 } from '../../../../modules/translate/translate.actions';
-import {Store} from '@ngxs/store';
 import {TranslateStateModel} from '../../../../modules/translate/translate.state';
-import {BaseComponent} from '../../../../components/base/base.component';
+import {textConst} from './constants';
 
 @Component({
   selector: 'app-spoken-language-input',
@@ -26,6 +27,9 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
   detectedLanguage: string;
   spokenLanguage: string;
 
+  textSegments: string[]; // Segments de texte découpés
+  currentSegmentIndex = 0; // Index du segment actuel
+
   @Input() isMobile = false;
 
   constructor(private store: Store) {
@@ -33,6 +37,9 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
     this.translate$ = this.store.select<TranslateStateModel>(state => state.translate);
     this.text$ = this.store.select<string>(state => state.translate.spokenLanguageText);
     this.normalizedText$ = this.store.select<string>(state => state.translate.normalizedSpokenLanguageText);
+
+    // Découpe le texte en segments de 500 caractères maximum
+    this.textSegments = this.splitTextIntoSegments(textConst, 50);
   }
 
   ngOnInit() {
@@ -45,12 +52,20 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe();
+    this.updateTextSegment();
+    // Met à jour automatiquement le texte du formulaire toutes les 20 secondes
+    interval(20000)
+      .pipe(
+        tap(() => this.updateTextSegment()),
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe();
 
-    // Local text changes
+    // Gère les changements locaux de texte
     this.text.valueChanges
       .pipe(
         debounce(() => interval(300)),
-        skipWhile(text => !text), // Don't run on empty text, on app launch
+        skipWhile(text => !text), // Ne pas exécuter sur un texte vide au démarrage
         distinctUntilChanged((a, b) => a.trim() === b.trim()),
         tap(text => this.store.dispatch(new SetSpokenLanguageText(text))),
         takeUntil(this.ngUnsubscribe)
@@ -61,18 +76,35 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
       .pipe(
         debounce(() => interval(1000)),
         distinctUntilChanged((a, b) => a.trim() === b.trim()),
-        tap(text => this.store.dispatch(new SuggestAlternativeText())),
+        tap(() => this.store.dispatch(new SuggestAlternativeText())),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe();
 
-    // Changes from the store
+    // Met à jour le champ de texte avec le texte du store
     this.text$
       .pipe(
-        tap(text => this.text.setValue(text)),
+        tap(text => this.text.setValue(text, {emitEvent: false})), // Pas d'événement ici pour éviter les boucles
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe();
+  }
+
+  private splitTextIntoSegments(text: string, maxLength: number): string[] {
+    const segments: string[] = [];
+    for (let i = 0; i < text.length; i += maxLength) {
+      segments.push(text.substring(i, i + maxLength));
+    }
+    return segments;
+  }
+
+  private updateTextSegment() {
+    if (this.textSegments.length > 0) {
+      // Définit le texte du formulaire au segment courant avec `emitEvent: true` pour déclencher les actions
+      this.text.setValue(this.textSegments[this.currentSegmentIndex], {emitEvent: true});
+      // Passe au prochain segment, revient au début si fin du tableau
+      this.currentSegmentIndex = (this.currentSegmentIndex + 1) % this.textSegments.length;
+    }
   }
 
   setText(text: string) {
