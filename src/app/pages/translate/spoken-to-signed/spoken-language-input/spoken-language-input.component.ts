@@ -1,5 +1,7 @@
+import {HttpClient} from '@angular/common/http';
 import {Component, Input, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {interval, Observable} from 'rxjs';
 import {debounce, distinctUntilChanged, skipWhile, takeUntil, tap} from 'rxjs/operators';
@@ -10,7 +12,6 @@ import {
   SuggestAlternativeText,
 } from '../../../../modules/translate/translate.actions';
 import {TranslateStateModel} from '../../../../modules/translate/translate.state';
-import {textConst} from './constants';
 
 @Component({
   selector: 'app-spoken-language-input',
@@ -31,15 +32,13 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
   currentSegmentIndex = 0; // Index du segment actuel
 
   @Input() isMobile = false;
+  videoId!: string;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private http: HttpClient, private route: ActivatedRoute) {
     super();
     this.translate$ = this.store.select<TranslateStateModel>(state => state.translate);
     this.text$ = this.store.select<string>(state => state.translate.spokenLanguageText);
     this.normalizedText$ = this.store.select<string>(state => state.translate.normalizedSpokenLanguageText);
-
-    // Découpe le texte en segments de 500 caractères maximum
-    this.textSegments = this.splitTextIntoSegments(textConst, 50);
   }
 
   ngOnInit() {
@@ -52,6 +51,12 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe();
+
+    this.videoId = 'o-7VQVXU-jQ';
+
+    if (this.videoId) {
+      this.getTranscript(this.videoId); // Récupère les sous-titres si `video_id` est présent
+    }
     this.updateTextSegment();
     // Met à jour automatiquement le texte du formulaire toutes les 20 secondes
     interval(20000)
@@ -113,5 +118,16 @@ export class SpokenLanguageInputComponent extends BaseComponent implements OnIni
 
   setDetectedLanguage() {
     this.store.dispatch(new SetSpokenLanguage(this.detectedLanguage));
+  }
+
+  getTranscript(videoId: string) {
+    return this.http.get(`http://localhost:3000/api/transcript/${videoId}`).subscribe(
+      data => {
+        console.log({data});
+        // this.textSegments = this.splitTextIntoSegments(data)
+        // this.transcript = data;
+      },
+      error => console.error('Error fetching transcript:', error)
+    );
   }
 }
